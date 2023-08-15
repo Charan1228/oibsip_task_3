@@ -1,0 +1,241 @@
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class atm {
+    public static void main(String[] args) throws IOException {
+        OptionMenu optionMenu = new OptionMenu();
+        optionMenu.getLogin();
+    }
+}
+
+class OptionMenu extends Account {
+    Scanner menuInput = new Scanner(System.in);
+    DecimalFormat moneyFormat = new DecimalFormat("'$'###,##0.00");
+
+    Map<Integer, Integer> data = new HashMap<>();
+
+    public void getLogin() throws IOException {
+        int x = 1;
+        do {
+            try {
+                System.out.println("Welcome to the ATM Project!");
+                System.out.print("Create a new Customer ID: ");
+                int newCustomerId = menuInput.nextInt();
+                System.out.print("Create a new PIN: ");
+                int newPin = menuInput.nextInt();
+                data.put(newCustomerId, newPin);
+                System.out.println("Account created successfully!");
+
+            } catch (Exception e) {
+                System.out.println("\n" + "Invalid Character(s). Only Numbers." + "\n");
+                x = 2;
+            }
+            int cn, pn;
+            System.out.print("Enter your customer Number: ");
+            cn = menuInput.nextInt();
+            System.out.print("Enter your PIN Number: ");
+            pn = menuInput.nextInt();
+
+            if (data.containsKey(cn) && data.get(cn) == pn) {
+                getAccountType();
+            } else {
+                System.out.println("\n" + "Wrong Customer Number or Pin Number" + "\n");
+            }
+        } while (x == 1);
+    }
+
+    public void getAccountType() {
+        System.out.println("Select the Account you Want to Access: ");
+        System.out.println(" Type 1 - Checking Account");
+        System.out.println(" Type 2 - Saving Account");
+        System.out.println(" Type 3 - Exit");
+        System.out.print("Choice: ");
+
+        int selection = menuInput.nextInt();
+
+        switch (selection) {
+            case 1:
+                getChecking();
+                break;
+
+            case 2:
+                getSaving();
+                break;
+
+            case 3:
+                System.out.println("Thank You for using this ATM, bye. \n");
+                break;
+
+            default:
+                System.out.println("\n" + "Invalid Choice." + "\n");
+                getAccountType();
+        }
+    }
+
+    public void getChecking() {
+        System.out.println("Checking Account: ");
+        System.out.println(" Type 1 - View Balance");
+        System.out.println(" Type 2 - Withdraw Funds");
+        System.out.println(" Type 3 - Deposit Funds");
+        System.out.println(" Type 4 - Exit");
+        System.out.print("Choice: ");
+
+        int selection = menuInput.nextInt();
+
+        switch (selection) {
+            case 1:
+                System.out.println("Checking Account Balance: " + moneyFormat.format(getCheckingBalance()));
+                getAccountType();
+                break;
+
+            case 2:
+                getCheckingWithdrawInput();
+                getAccountType();
+                break;
+
+            case 3:
+                getCheckingDepositInput();
+                getAccountType();
+                break;
+
+            case 4:
+                System.out.println("Thank you for using our ATM, bye.");
+                break;
+
+            default:
+                System.out.println("\n" + "Invalid choice." + "\n");
+                getChecking();
+        }
+    }
+
+    public void getSaving() {
+        System.out.println("Saving Account: ");
+        System.out.println(" Type 1 - View Balance");
+        System.out.println(" Type 2 - Withdraw Funds");
+        System.out.println(" Type 3 - Deposit Funds");
+        System.out.println(" Type 4 - Exit");
+        System.out.print("Choice: ");
+
+        int selection = menuInput.nextInt();
+
+        switch (selection) {
+            case 1:
+                System.out.println("Saving Account Balance: " + moneyFormat.format(getSavingBalance()));
+                getAccountType();
+                break;
+
+            case 2:
+                getSavingWithdrawInput();
+                getAccountType();
+                break;
+
+            case 3:
+                getSavingDepositInput();
+                getAccountType();
+                break;
+
+            case 4:
+                System.out.println("Thank You for using this ATM, bye.");
+                break;
+
+            default:
+                System.out.println("\n" + "Invalid choice." + "\n");
+                getChecking();
+        }
+    }
+}
+
+class Account {
+    private double checkingBalance = 1000; // Initial balance
+    private double savingBalance = 1000;   // Initial balance
+    Scanner input = new Scanner(System.in);
+    DecimalFormat moneyFormat = new DecimalFormat("'$'###,##0.00");
+
+    public double getCheckingBalance() {
+        return checkingBalance;
+    }
+
+    public double getSavingBalance() {
+        return savingBalance;
+    }
+
+    public double calcCheckingWithdraw(double amount) {
+        checkingBalance = (checkingBalance - amount);
+        return checkingBalance;
+    }
+
+    public double calcSavingWithdraw(double amount) {
+        savingBalance = (savingBalance - amount);
+        return savingBalance;
+    }
+
+    public double calcCheckingDeposit(double amount) {
+        checkingBalance = (checkingBalance + amount);
+        return checkingBalance;
+    }
+
+    public double calcSavingDeposit(double amount) {
+        savingBalance = (savingBalance + amount);
+        return savingBalance;
+    }
+
+    public void getCheckingWithdrawInput() {
+        // ... (rest of the method remains the same)
+        System.out.println("Checking Account Balance: " + moneyFormat.format(getCheckingBalance()));
+        System.out.print("Amount You Want To Withdraw From Checking Account: ");
+        double amount = input.nextDouble();
+        if ((checkingBalance - amount) >= 0) {
+            calcCheckingWithdraw(amount);
+            System.out.println("New Checking Account Balance: " + moneyFormat.format(getCheckingBalance()));
+        } else {
+            System.out.println("Balance cannot be negative." + "\n");
+        }
+    }
+
+    
+
+    public void getSavingWithdrawInput() {
+        
+    // ... (rest of the method remains the same)
+    System.out.println("Saving Account Balance: " + moneyFormat.format(getSavingBalance()));
+        System.out.print("Amount You Want To Withdraw From Saving Account: ");
+        double amount = input.nextDouble();
+        if ((savingBalance - amount) >= 0) {
+            calcSavingWithdraw(amount);
+            System.out.println("New Saving Account Balance: " + moneyFormat.format(getSavingBalance()));
+        } else {
+            System.out.println("Balance Cannot Be Negative." + "\n");
+
+    }
+    }
+    public void getCheckingDepositInput() {
+        // ... (rest of the method remains the same)
+        System.out.println("Checking Account Balance: " + moneyFormat.format(getCheckingBalance()));
+        System.out.print("Amount you want to Deposit from Checking Account: ");
+        double amount = input.nextDouble();
+        if ((checkingBalance + amount) >= 0) {
+            calcCheckingDeposit(amount);
+            System.out.println("New Checking Account Balance: " + moneyFormat.format(getCheckingBalance()));
+        } else {
+            System.out.println("Balance Cannot Be Negative." + "\n");
+        }
+    }
+
+    
+
+    public void getSavingDepositInput() {
+        // ... (rest of the method remains the same)
+        System.out.println("Saving Account Balance : " + moneyFormat.format(getSavingBalance()));
+        System.out.println("Amount You Want To Deposit From Saving Account: ");
+        double amount = input.nextDouble();
+        if ((savingBalance + amount) >= 0) {
+            calcSavingDeposit(amount);
+            System.out.println("New Saving Account Balance: " + moneyFormat.format(getSavingBalance()));
+        } else {
+            System.out.println("Balance Cannot Be Negative." + "\n");
+        }
+    }
+}
